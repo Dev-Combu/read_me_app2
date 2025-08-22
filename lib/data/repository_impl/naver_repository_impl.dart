@@ -1,0 +1,28 @@
+import 'package:read_me_app2/data/source/naver/naver_data_source.dart';
+import 'package:read_me_app2/domain/entity/naver_entity.dart';
+import 'package:read_me_app2/domain/repository/naver_repository.dart';
+
+class NaverRepositoryImpl implements NaverRepository{
+  NaverRepositoryImpl(this._naverDataSource);
+  final NaverDataSource _naverDataSource;
+
+
+  @override
+  Future<List<NaverEntity>?> searchBook(String query, int start) async{
+    final result = await _naverDataSource.searchBook(query, start);
+    return result
+      .map(
+        (e) => NaverEntity(
+            title: e.title,
+            link: e.link,
+            image: e.image,
+            author: e.author,
+            discount: e.discount,
+            publisher: e.publisher,
+            pubdate: e.pubdate,
+            isbn: e.isbn,
+            description: e.description,
+            )
+      ).toList();
+  }
+}
