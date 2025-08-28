@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget{
       appBar: AppBar(
         centerTitle: true,
         title: Text('home',),
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Theme.of(context).colorScheme.surface,
       ),
       body: Center(
         child: Text('home'),

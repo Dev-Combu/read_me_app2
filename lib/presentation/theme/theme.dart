@@ -19,6 +19,10 @@ class AppTheme {
       foregroundColor: Color(0xFF1E2A38),
       elevation: 0,
     ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Color(0xFFC8A978),
+      elevation: 0,
+    ),
     inputDecorationTheme: const InputDecorationTheme(
       filled: true,
       fillColor: Color(0xFFF4ECE3),
