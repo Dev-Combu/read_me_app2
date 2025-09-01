@@ -3,13 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:read_me_app2/presentation/ui/bookcase/bookcase_page.dart';
 import 'package:read_me_app2/presentation/ui/bookcase_write/bookcase_write_page.dart';
 import 'package:read_me_app2/presentation/ui/booksearch/booksearch_page.dart';
-import 'package:read_me_app2/presentation/ui/home/home_page.dart';
+import 'package:read_me_app2/presentation/ui/option/option_page.dart';
 import 'package:read_me_app2/presentation/widgets/bottom_tab_bar/bottom_tab_bar.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/bookcase',
   navigatorKey: _rootNavigatorKey,
   routes: [
     ShellRoute(
@@ -22,16 +22,16 @@ final router = GoRouter(
       },
       routes: [
         GoRoute(
-          path: '/',
-          builder: (context, state) => HomePage(),
-        ),
-        GoRoute(
           path: '/bookcase',
           builder: (context, state) => BookcasePage(),
         ),
         GoRoute(
           path: '/booksearch',
           builder: (context, state) => BooksearchPage(),
+        ),
+         GoRoute(
+          path: '/option',
+          builder: (context, state) => OptionPage(),
         ),
       ],
     ),
