@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:read_me_app2/presentation/ui/auth/login_in_page.dart';
 import 'package:read_me_app2/presentation/ui/bookcase/bookcase_page.dart';
 import 'package:read_me_app2/presentation/ui/bookcase_write/bookcase_write_page.dart';
 import 'package:read_me_app2/presentation/ui/booksearch/booksearch_page.dart';
@@ -9,9 +10,10 @@ import 'package:read_me_app2/presentation/widgets/bottom_tab_bar/bottom_tab_bar.
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
-  initialLocation: '/bookcase',
+  initialLocation: '/login',
   navigatorKey: _rootNavigatorKey,
   routes: [
+    GoRoute(path: '/login', builder: (context, state) => LoginInPage()),
     ShellRoute(
       navigatorKey: GlobalKey<NavigatorState>(),
       builder: (context, state, child) {
