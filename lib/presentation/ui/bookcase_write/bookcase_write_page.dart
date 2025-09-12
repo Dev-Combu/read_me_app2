@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -37,9 +38,12 @@ class _BookcaseWritePageState extends ConsumerState<BookcaseWritePage> {
   final TextEditingController _textEditingControllerDetail =
       TextEditingController();
 
+  User? currentUser = FirebaseAuth.instance.currentUser;
+
   Future<void> _saveBook() async {
     final book = ReadingBookEntity(
       id: '',
+      uid: currentUser?.uid ??'', // uid 추가
       image: widget.image,
       author: widget.author,
       bookTitle: widget.booktitle,
@@ -54,6 +58,7 @@ class _BookcaseWritePageState extends ConsumerState<BookcaseWritePage> {
   Future<void> _editBook() async {
     final book = ReadingBookEntity(
       id: widget.id ?? '',
+      uid: currentUser?.uid ??'', // uid 추가
       image: widget.image,
       author: widget.author,
       bookTitle: widget.booktitle,
@@ -163,7 +168,10 @@ class _BookcaseWritePageState extends ConsumerState<BookcaseWritePage> {
             ),
             widget.isWriting
                 ? TextButton(
-                    onPressed: _saveBook,
+                    onPressed: () async{
+                      context.go('/bookcase');
+                      await _saveBook();
+                    },
                     child: Text('저장하기'),
                   )
                 : isEditing
@@ -174,7 +182,7 @@ class _BookcaseWritePageState extends ConsumerState<BookcaseWritePage> {
                             child: Text('수정 저장하기'),
                           ),
                           TextButton(
-                            onPressed: () {
+                            onPressed: () async{
                               deleteDialog(context);
                             },
                             child: Text('삭제하기'),
@@ -206,29 +214,29 @@ class _BookcaseWritePageState extends ConsumerState<BookcaseWritePage> {
 
   Future<dynamic> deleteDialog(BuildContext context) {
     return showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text('삭제 확인'),
-                                content: Text('정말 삭제하시겠습니까?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(), // 취소
-                                    child: Text('취소'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).pop(); // 다이얼로그 닫기
-                                      await _deleteBook(
-                                          widget.id!); // 실제 삭제 로직
-                                      if (context.mounted) {
-                                        context.pop(); // 이전 화면으로 돌아가기
-                                      }
-                                    },
-                                    child: Text('삭제'),
-                                  ),
-                                ],
-                              ),
-                            );
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('삭제 확인'),
+        content: Text('정말 삭제하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(), // 취소
+            child: Text('취소'),
+          ),
+          TextButton(
+            onPressed: () async {
+              context.go('/bookcase');
+              
+              await _deleteBook(widget.id!); // 실제 삭제 로직
+              if (context.mounted) {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+                 // 이전 화면으로 돌아가기
+              }
+            },
+            child: Text('삭제'),
+          ),
+        ],
+      ),
+    );
   }
 }

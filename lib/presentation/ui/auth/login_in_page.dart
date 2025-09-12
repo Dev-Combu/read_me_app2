@@ -1,17 +1,59 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
+import 'package:read_me_app2/presentation/ui/auth/auth_view_model.dart';
 
-class LoginInPage extends StatefulWidget{
+class LoginInPage extends ConsumerStatefulWidget {
   const LoginInPage({super.key});
 
   @override
-  State<LoginInPage> createState() => _LoginInPageState();
+  ConsumerState<LoginInPage> createState() => _LoginInPageState();
 }
 
-class _LoginInPageState extends State<LoginInPage> {
+class _LoginInPageState extends ConsumerState<LoginInPage> {
   bool isLogin = true;
   TextEditingController emailController = TextEditingController();
   TextEditingController pwdController = TextEditingController();
+  Logger logger = Logger();
+
+  Future<void> emailLogIn(String email, String pwd) async {
+    await ref.read(emailAuthViewModelProvider.notifier).logIn(email, pwd);
+    emailController.clear();
+    pwdController.clear();
+  }
+
+  Future<void> emailSignUp(String email, String pwd) async {
+    try {
+      await ref.read(emailAuthViewModelProvider.notifier).signUp(email, pwd);
+      emailController.clear();
+      pwdController.clear();
+      setState(() {
+        isLogin = true;
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        logger.d('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        logger.d('The account already exists for that email.');
+      }
+    } catch (e) {
+      logger.d(e);
+      emailController.clear();
+      pwdController.clear();
+      setState(() {
+        isLogin = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isLogin = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,56 +101,35 @@ class _LoginInPageState extends State<LoginInPage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async{
                     if (isLogin) {
-                      //로그인 로직
-                      FirebaseAuth.instance
-                          .signInWithEmailAndPassword(
-                            email: emailController.text,
-                            password: pwdController.text,
-                          )
+                      emailLogIn(emailController.text, pwdController.text)
+                          .then((value) {
+                            //로그인 성공시
+                            if (mounted) {
+                              context.go('/bookcase');
+                            }
+                          })
                           .catchError((e) {
                             //로그인 실패시
                             print(e);
-                          })
-                          .then((value) {
-                            //로그인 성공했을시
-                            emailController.clear();
-                            pwdController.clear();
-                            print('로그인 성공');
                           });
-                    } else {
-                      //회원가입 로직
-                      FirebaseAuth.instance
-                          .createUserWithEmailAndPassword(
-                            email: emailController.text,
-                            password: pwdController.text,
-                          )
-                          .catchError((e) {
-                            //회원가입 실패시
-                            print(e);
-                          })
-                          .then((value) {
-                            //회원가입 성공시
-                            emailController.clear();
-                            pwdController.clear();
-                            print('회원가입 성공');
-                          });
+                    } else  {
+                      emailSignUp(emailController.text, pwdController.text);
+                      
                     }
                   },
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(),
-                      borderRadius: BorderRadius.circular(8)
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        !isLogin ? "회원가입" : "로그인"
-                      ),
+                      child: Text(!isLogin ? "회원가입" : "로그인"),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),

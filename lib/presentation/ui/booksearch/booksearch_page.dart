@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:read_me_app2/presentation/ui/booksearch/booksearch_view_model.dart';
 
 class BooksearchPage extends ConsumerStatefulWidget {
@@ -28,6 +29,15 @@ class _BooksearchPageState extends ConsumerState<BooksearchPage> {
       isFetching = false;
       if (append) this.start += 10; // 다음 페이지 요청을 위한 start 값 증가
     });
+  }
+
+  formattedDate(String date){
+    try {
+      final parsedDate = DateTime.parse(date);
+      return DateFormat("yyyy년 MM월 dd일").format(parsedDate);
+    } catch (e) {
+      return date; // 파싱 실패 시 원래 문자열 반환
+    }
   }
 
   @override
@@ -105,7 +115,7 @@ class _BooksearchPageState extends ConsumerState<BooksearchPage> {
                                   ),
                                 ),
                                 Text(result.author, overflow: TextOverflow.ellipsis),
-                                Text(result.pubdate, overflow: TextOverflow.ellipsis),
+                                Text(formattedDate(result.pubdate), overflow: TextOverflow.ellipsis),
                               ],
                             ),
                           ),
