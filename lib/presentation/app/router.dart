@@ -1,17 +1,42 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:read_me_app2/presentation/ui/auth/login_in_page.dart';
 import 'package:read_me_app2/presentation/ui/bookcase/bookcase_page.dart';
 import 'package:read_me_app2/presentation/ui/bookcase_write/bookcase_write_page.dart';
 import 'package:read_me_app2/presentation/ui/booksearch/booksearch_page.dart';
 import 'package:read_me_app2/presentation/ui/option/option_page.dart';
 import 'package:read_me_app2/presentation/widgets/bottom_tab_bar/bottom_tab_bar.dart';
 
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    stream.listen((_) => notifyListeners());
+  }
+}
+
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
-  initialLocation: '/bookcase',
+  initialLocation: '/login',
   navigatorKey: _rootNavigatorKey,
+
+  refreshListenable: GoRouterRefreshStream(
+    FirebaseAuth.instance.authStateChanges(),
+  ),
+  redirect: (context, state) {
+    final user = FirebaseAuth.instance.currentUser;
+    final isLoggingIn = state.matchedLocation == '/login';
+    if (user == null && !isLoggingIn) {
+      return '/login';
+    }
+    if (user != null && isLoggingIn) {
+      return '/bookcase';
+    }
+    return null;
+  },
   routes: [
+    GoRoute(path: '/login', builder: (context, state) => LoginInPage()),
     ShellRoute(
       navigatorKey: GlobalKey<NavigatorState>(),
       builder: (context, state, child) {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_me_app2/firebase_options.dart';
-
 import 'package:read_me_app2/presentation/app/router.dart';
 import 'package:read_me_app2/presentation/theme/theme.dart';
 

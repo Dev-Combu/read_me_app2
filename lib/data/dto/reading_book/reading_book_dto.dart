@@ -7,6 +7,7 @@ part 'reading_book_dto.g.dart';
 abstract class ReadingBookDto with _$ReadingBookDto {
   factory ReadingBookDto({
     required String id,
+    required String uid,
     required String author,
     required String bookTitle,
     required String title,

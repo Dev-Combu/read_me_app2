@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,7 +18,7 @@ class _BookcasePageState extends ConsumerState<BookcasePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("tlf"),
+        title: Text("나의 서재"),
       ),
       body: ListView.separated(
         itemBuilder: (context, index) {
@@ -29,6 +27,7 @@ class _BookcasePageState extends ConsumerState<BookcasePage> {
             onTap: () {
               context.push('/write', extra: {
                 'id' : result.id,
+                'uid' : result.uid,
                 'booktitle': result.bookTitle,
                 'author': result.author,
                 'image': result.image,
